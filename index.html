@@ -1,11 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="description" content="小さなヒーローを操作してゴールを目指す横スクロールアクションゲーム">
+    <title>STARBOUND RUNNER</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    welcome!
+    <main class="game-shell">
+        <header class="game-header">
+            <div>
+                <p class="eyebrow">MINI ACTION / MVP-01</p>
+                <h1>STARBOUND <span>RUNNER</span></h1>
+            </div>
+            <div class="status" aria-label="ゲーム情報">
+                <div><span>スコア</span><strong id="score">0000</strong></div>
+                <div><span>残りHP</span><strong id="lives">●●●</strong></div>
+            </div>
+        </header>
+
+        <section class="game-card" aria-label="ゲーム画面">
+            <canvas id="gameCanvas" width="960" height="540">
+                お使いのブラウザはCanvasに対応していません。
+            </canvas>
+            <div class="message" id="message" hidden>
+                <p class="message-kicker" id="messageKicker">MISSION COMPLETE</p>
+                <h2 id="messageTitle">星を集めた！</h2>
+                <p id="messageText">ゴールに到着しました。</p>
+                <button id="restartButton">もう一度プレイ</button>
+            </div>
+        </section>
+
+        <footer class="controls">
+            <p><kbd>←</kbd><kbd>→</kbd> 移動</p>
+            <p><kbd>Space</kbd> ジャンプ</p>
+            <p class="hint">コインを集めて、旗まで走ろう</p>
+        </footer>
+    </main>
+    <script src="script.js"></script>
 </body>
 </html>
