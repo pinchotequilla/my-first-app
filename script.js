@@ -119,7 +119,7 @@ function draw() {
     sky.addColorStop(0, '#090d28'); sky.addColorStop(.55, '#182756'); sky.addColorStop(1, '#101323');
     ctx.fillStyle = sky; ctx.fillRect(0, 0, WIDTH, HEIGHT);
     drawStars();
-    drawMoon();
+    drawCity();
     drawHorizonGlow();
     ctx.save(); ctx.translate(-game.camera, 0);
     drawMountains();
@@ -130,11 +130,11 @@ function draw() {
     drawGoal();
     if (game.player.invincible % 8 < 4) drawPlayer();
     ctx.restore();
-    ctx.fillStyle = 'rgba(183,236,255,.7)'; ctx.font = '700 12px Space Grotesk'; ctx.fillText('SECTOR 01  /  STAR VALLEY', 22, 30);
+    ctx.fillStyle = 'rgba(0,245,255,.8)'; ctx.font = '700 12px Space Grotesk'; ctx.fillText('NIGHT CITY  //  SECTOR 01', 22, 30);
 }
 
 function drawStars() {
-    ctx.fillStyle = '#c9f4ff';
+    ctx.fillStyle = '#00f5ff';
     for (let i = 0; i < 90; i++) {
         const x = (i * 137) % WIDTH;
         const y = (i * 71) % 300;
@@ -144,13 +144,19 @@ function drawStars() {
     }
     ctx.globalAlpha = 1;
 }
-function drawMoon() {
-    const glow = ctx.createRadialGradient(760, 112, 8, 760, 112, 92);
-    glow.addColorStop(0, 'rgba(168, 239, 255, .32)');
-    glow.addColorStop(1, 'rgba(168, 239, 255, 0)');
-    ctx.fillStyle = glow; ctx.fillRect(668, 20, 184, 184);
-    ctx.fillStyle = '#b9edff'; ctx.beginPath(); ctx.arc(760, 112, 35, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = 'rgba(74, 123, 177, .25)'; ctx.beginPath(); ctx.arc(748, 100, 8, 0, Math.PI * 2); ctx.arc(775, 125, 6, 0, Math.PI * 2); ctx.fill();
+function drawCity() {
+    for (let x = -60; x < WIDTH + 100; x += 55) {
+        const height = 90 + ((x * 7) % 120);
+        const y = 430 - height;
+        ctx.fillStyle = x % 110 === 0 ? '#17113d' : '#0d1736';
+        ctx.fillRect(x, y, 42, height);
+        ctx.fillStyle = x % 110 === 0 ? 'rgba(255,43,214,.75)' : 'rgba(0,245,255,.55)';
+        for (let windowY = y + 15; windowY < 420; windowY += 20) ctx.fillRect(x + 8, windowY, 5, 3);
+        if (x % 165 === 0) {
+            ctx.strokeStyle = 'rgba(255,43,214,.7)'; ctx.strokeRect(x + 7, y + 28, 28, 20);
+            ctx.fillStyle = 'rgba(255,43,214,.8)'; ctx.font = '700 8px Space Grotesk'; ctx.fillText('N//', x + 12, y + 41);
+        }
+    }
 }
 function drawHorizonGlow() {
     const glow = ctx.createLinearGradient(0, 350, 0, 470);
@@ -171,16 +177,16 @@ function drawDistantGrid() {
     for (let x = -100; x < level.width + 100; x += 70) { ctx.beginPath(); ctx.moveTo(x, 430); ctx.lineTo(x + (x - game.camera) * .08, 540); ctx.stroke(); }
 }
 function drawPlatform(p) {
-    ctx.fillStyle = '#263663'; ctx.fillRect(p.x, p.y, p.w, p.h);
-    ctx.fillStyle = '#63e6e3'; ctx.fillRect(p.x, p.y, p.w, 5);
-    ctx.fillStyle = '#ffd166'; ctx.fillRect(p.x, p.y + 5, p.w, 2);
+    ctx.fillStyle = '#172448'; ctx.fillRect(p.x, p.y, p.w, p.h);
+    ctx.fillStyle = '#00f5ff'; ctx.fillRect(p.x, p.y, p.w, 4);
+    ctx.fillStyle = '#ff2bd6'; ctx.fillRect(p.x, p.y + 4, p.w, 2);
     ctx.fillStyle = 'rgba(7, 13, 34, .42)'; for (let x = p.x + 12; x < p.x + p.w; x += 26) ctx.fillRect(x, p.y + 18, 10, 4);
-    ctx.strokeStyle = 'rgba(111, 226, 255, .22)'; ctx.strokeRect(p.x, p.y + 8, p.w, p.h - 8);
+    ctx.strokeStyle = 'rgba(0, 245, 255, .3)'; ctx.strokeRect(p.x, p.y + 8, p.w, p.h - 8);
 }
-function drawCoin(c) { const bob = Math.sin(game.time * .08 + c.pulse) * 4; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 16; ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.arc(c.x, c.y + bob, 9, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0; ctx.fillStyle = '#fff4bd'; ctx.fillRect(c.x - 2, c.y - 5 + bob, 3, 8); }
-function drawEnemy(e) { ctx.fillStyle = '#ff537d'; ctx.fillRect(e.x, e.y, 30, 32); ctx.fillStyle = '#661c55'; ctx.fillRect(e.x + 4, e.y + 4, 22, 4); ctx.fillStyle = '#171633'; ctx.fillRect(e.x + 5, e.y + 11, 6, 7); ctx.fillRect(e.x + 19, e.y + 11, 6, 7); ctx.fillStyle = '#ffb3d0'; ctx.fillRect(e.x + 7, e.y + 26, 16, 3); }
-function drawPlayer() { const p = game.player; ctx.fillStyle = '#34c9cf'; ctx.fillRect(p.x, p.y + 12, p.w, 30); ctx.fillStyle = '#8af4ff'; ctx.fillRect(p.x + 3, p.y, 22, 22); ctx.fillStyle = '#18224b'; ctx.fillRect(p.x + 6, p.y + 6, 16, 8); ctx.fillStyle = '#d8fbff'; ctx.fillRect(p.x + 8, p.y + 8, 4, 3); ctx.fillStyle = '#ffd166'; ctx.fillRect(p.x - 4, p.y + 25, 36, 5); ctx.fillStyle = '#1b3664'; ctx.fillRect(p.x + 4, p.y + 34, 7, 8); ctx.fillRect(p.x + 18, p.y + 34, 7, 8); }
-function drawGoal() { ctx.fillStyle = '#b9edff'; ctx.fillRect(3130, 330, 5, 125); ctx.fillStyle = '#ff4f87'; ctx.beginPath(); ctx.moveTo(3135, 330); ctx.lineTo(3190, 350); ctx.lineTo(3135, 370); ctx.fill(); ctx.fillStyle = 'rgba(255,79,135,.3)'; ctx.fillRect(3122, 330, 5, 125); }
+function drawCoin(c) { const bob = Math.sin(game.time * .08 + c.pulse) * 4; ctx.shadowColor = '#ffe600'; ctx.shadowBlur = 16; ctx.fillStyle = '#ffe600'; ctx.beginPath(); ctx.moveTo(c.x, c.y - 11 + bob); ctx.lineTo(c.x + 10, c.y + bob); ctx.lineTo(c.x, c.y + 11 + bob); ctx.lineTo(c.x - 10, c.y + bob); ctx.closePath(); ctx.fill(); ctx.shadowBlur = 0; ctx.fillStyle = '#fff8a8'; ctx.fillRect(c.x - 2, c.y - 5 + bob, 4, 10); }
+function drawEnemy(e) { ctx.fillStyle = '#4a123e'; ctx.fillRect(e.x, e.y, 30, 32); ctx.strokeStyle = '#ff3864'; ctx.strokeRect(e.x + 1, e.y + 1, 28, 30); ctx.fillStyle = '#ff3864'; ctx.fillRect(e.x + 4, e.y + 4, 22, 4); ctx.fillStyle = '#0b0b22'; ctx.fillRect(e.x + 5, e.y + 11, 6, 7); ctx.fillRect(e.x + 19, e.y + 11, 6, 7); ctx.fillStyle = '#ffb3d0'; ctx.fillRect(e.x + 7, e.y + 26, 16, 3); }
+function drawPlayer() { const p = game.player; ctx.fillStyle = '#123d61'; ctx.fillRect(p.x, p.y + 12, p.w, 30); ctx.strokeStyle = '#00f5ff'; ctx.strokeRect(p.x + 1, p.y + 13, p.w - 2, 28); ctx.fillStyle = '#00f5ff'; ctx.fillRect(p.x + 3, p.y, 22, 22); ctx.fillStyle = '#101638'; ctx.fillRect(p.x + 6, p.y + 6, 16, 8); ctx.fillStyle = '#ffe600'; ctx.fillRect(p.x + 8, p.y + 8, 4, 3); ctx.fillStyle = '#ff2bd6'; ctx.fillRect(p.x - 4, p.y + 25, 36, 5); ctx.fillStyle = '#174779'; ctx.fillRect(p.x + 4, p.y + 34, 7, 8); ctx.fillRect(p.x + 18, p.y + 34, 7, 8); }
+function drawGoal() { ctx.shadowColor = '#ff2bd6'; ctx.shadowBlur = 18; ctx.strokeStyle = '#ff2bd6'; ctx.lineWidth = 7; ctx.strokeRect(3130, 330, 60, 125); ctx.shadowBlur = 0; ctx.fillStyle = '#ffe600'; ctx.font = '700 12px Space Grotesk'; ctx.fillText('EXIT', 3142, 315); ctx.fillStyle = 'rgba(0,245,255,.16)'; ctx.fillRect(3136, 336, 48, 115); }
 
 function loop() { update(); draw(); requestAnimationFrame(loop); }
 window.addEventListener('keydown', event => { keys[event.key] = true; if (event.code === 'Space') { event.preventDefault(); jump(); } });
