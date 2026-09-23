@@ -15,7 +15,6 @@
                 <h1>STARBOUND <span>RUNNER</span></h1>
             </div>
             <div class="status" aria-label="ゲーム情報">
-                <div><span>スコア</span><strong id="score">0000</strong></div>
                 <div><span>残りHP</span><strong id="lives">●●●</strong></div>
             </div>
         </header>
@@ -24,6 +23,10 @@
             <canvas id="gameCanvas" width="960" height="540">
                 お使いのブラウザはCanvasに対応していません。
             </canvas>
+            <div class="score-badge" aria-label="スコア">
+                <span> SCORE </span>
+                <strong id="score">0000</strong>
+            </div>
             <div class="message" id="message" hidden>
                 <p class="message-kicker" id="messageKicker">MISSION COMPLETE</p>
                 <h2 id="messageTitle">星を集めた！</h2>
