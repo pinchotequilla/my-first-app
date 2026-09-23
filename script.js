@@ -104,7 +104,7 @@ function takeDamage() {
 
 function finish(won) {
     game.state = won ? 'won' : 'lost';
-    messageKicker.textContent = won ? 'MISSION COMPLETE' : 'GAME OVER';
+    messageKicker.textContent = won ? 'ミッション完了' : 'ゲームオーバー';
     messageTitle.textContent = won ? '星を集めた！' : 'もう一度挑戦しよう';
     messageText.textContent = won ? `スコア ${String(game.score).padStart(4, '0')} でゴール到着` : '操作を見直して、もう一度走ろう';
     message.hidden = false;
