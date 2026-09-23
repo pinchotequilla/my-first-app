@@ -116,38 +116,71 @@ function jump() { if (game.state === 'playing' && game.player.grounded) { game.p
 function draw() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     const sky = ctx.createLinearGradient(0, 0, 0, HEIGHT);
-    sky.addColorStop(0, '#182750'); sky.addColorStop(1, '#101426');
+    sky.addColorStop(0, '#090d28'); sky.addColorStop(.55, '#182756'); sky.addColorStop(1, '#101323');
     ctx.fillStyle = sky; ctx.fillRect(0, 0, WIDTH, HEIGHT);
     drawStars();
+    drawMoon();
+    drawHorizonGlow();
     ctx.save(); ctx.translate(-game.camera, 0);
     drawMountains();
+    drawDistantGrid();
     for (const platform of level.platforms) drawPlatform(platform);
     for (const coin of game.coins) if (!coin.collected) drawCoin(coin);
     for (const enemy of game.enemies) if (enemy.alive) drawEnemy(enemy);
     drawGoal();
     if (game.player.invincible % 8 < 4) drawPlayer();
     ctx.restore();
-    ctx.fillStyle = 'rgba(255,255,255,.45)'; ctx.font = '12px Space Grotesk'; ctx.fillText('SECTOR 01  /  STAR VALLEY', 22, 30);
+    ctx.fillStyle = 'rgba(183,236,255,.7)'; ctx.font = '700 12px Space Grotesk'; ctx.fillText('SECTOR 01  /  STAR VALLEY', 22, 30);
 }
 
 function drawStars() {
-    ctx.fillStyle = '#d6dcff';
-    for (let i = 0; i < 75; i++) { const x = (i * 137) % WIDTH; const y = (i * 71) % 300; ctx.globalAlpha = (i % 3) / 4 + .25; ctx.fillRect(x, y, 2, 2); }
+    ctx.fillStyle = '#c9f4ff';
+    for (let i = 0; i < 90; i++) {
+        const x = (i * 137) % WIDTH;
+        const y = (i * 71) % 300;
+        const size = i % 9 === 0 ? 3 : 2;
+        ctx.globalAlpha = (i % 4) / 5 + .2;
+        ctx.fillRect(x, y, size, size);
+    }
     ctx.globalAlpha = 1;
 }
+function drawMoon() {
+    const glow = ctx.createRadialGradient(760, 112, 8, 760, 112, 92);
+    glow.addColorStop(0, 'rgba(168, 239, 255, .32)');
+    glow.addColorStop(1, 'rgba(168, 239, 255, 0)');
+    ctx.fillStyle = glow; ctx.fillRect(668, 20, 184, 184);
+    ctx.fillStyle = '#b9edff'; ctx.beginPath(); ctx.arc(760, 112, 35, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(74, 123, 177, .25)'; ctx.beginPath(); ctx.arc(748, 100, 8, 0, Math.PI * 2); ctx.arc(775, 125, 6, 0, Math.PI * 2); ctx.fill();
+}
+function drawHorizonGlow() {
+    const glow = ctx.createLinearGradient(0, 350, 0, 470);
+    glow.addColorStop(0, 'rgba(57, 223, 222, 0)');
+    glow.addColorStop(1, 'rgba(57, 223, 222, .12)');
+    ctx.fillStyle = glow; ctx.fillRect(0, 350, WIDTH, 120);
+}
 function drawMountains() {
-    ctx.fillStyle = '#202d58'; ctx.beginPath(); ctx.moveTo(game.camera * .15, 455);
-    for (let x = -200; x < level.width + 500; x += 280) { ctx.lineTo(x, 260 + (x % 100)); ctx.lineTo(x + 140, 455); } ctx.fill();
+    ctx.fillStyle = '#111a43'; ctx.beginPath(); ctx.moveTo(game.camera * .15, 455);
+    for (let x = -200; x < level.width + 500; x += 280) { ctx.lineTo(x, 250 + (x % 100)); ctx.lineTo(x + 140, 455); } ctx.fill();
+    ctx.strokeStyle = 'rgba(100, 220, 255, .18)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(-200, 420);
+    for (let x = -200; x < level.width + 500; x += 280) { ctx.lineTo(x, 250 + (x % 100)); ctx.lineTo(x + 140, 455); } ctx.stroke();
+}
+function drawDistantGrid() {
+    ctx.strokeStyle = 'rgba(83, 226, 224, .12)'; ctx.lineWidth = 1;
+    for (let y = 430; y < 540; y += 18) { ctx.beginPath(); ctx.moveTo(-100, y); ctx.lineTo(level.width + 100, y); ctx.stroke(); }
+    for (let x = -100; x < level.width + 100; x += 70) { ctx.beginPath(); ctx.moveTo(x, 430); ctx.lineTo(x + (x - game.camera) * .08, 540); ctx.stroke(); }
 }
 function drawPlatform(p) {
-    ctx.fillStyle = '#2e3d61'; ctx.fillRect(p.x, p.y, p.w, p.h);
-    ctx.fillStyle = '#f7ce46'; ctx.fillRect(p.x, p.y, p.w, 6);
-    ctx.fillStyle = 'rgba(10,15,30,.3)'; for (let x = p.x + 12; x < p.x + p.w; x += 26) ctx.fillRect(x, p.y + 18, 10, 4);
+    ctx.fillStyle = '#263663'; ctx.fillRect(p.x, p.y, p.w, p.h);
+    ctx.fillStyle = '#63e6e3'; ctx.fillRect(p.x, p.y, p.w, 5);
+    ctx.fillStyle = '#ffd166'; ctx.fillRect(p.x, p.y + 5, p.w, 2);
+    ctx.fillStyle = 'rgba(7, 13, 34, .42)'; for (let x = p.x + 12; x < p.x + p.w; x += 26) ctx.fillRect(x, p.y + 18, 10, 4);
+    ctx.strokeStyle = 'rgba(111, 226, 255, .22)'; ctx.strokeRect(p.x, p.y + 8, p.w, p.h - 8);
 }
-function drawCoin(c) { const bob = Math.sin(game.time * .08 + c.pulse) * 4; ctx.fillStyle = '#f7ce46'; ctx.beginPath(); ctx.arc(c.x, c.y + bob, 9, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#fff0a3'; ctx.fillRect(c.x - 2, c.y - 5 + bob, 3, 8); }
-function drawEnemy(e) { ctx.fillStyle = '#e65c76'; ctx.fillRect(e.x, e.y, 30, 32); ctx.fillStyle = '#281b3e'; ctx.fillRect(e.x + 5, e.y + 8, 6, 7); ctx.fillRect(e.x + 19, e.y + 8, 6, 7); ctx.fillStyle = '#f6f3ea'; ctx.fillRect(e.x + 7, e.y + 25, 16, 4); }
-function drawPlayer() { const p = game.player; ctx.fillStyle = '#5ee1d0'; ctx.fillRect(p.x, p.y + 12, p.w, 30); ctx.fillStyle = '#f6f3ea'; ctx.fillRect(p.x + 3, p.y, 22, 22); ctx.fillStyle = '#27315b'; ctx.fillRect(p.x + 7, p.y + 7, 5, 6); ctx.fillRect(p.x + 18, p.y + 7, 5, 6); ctx.fillStyle = '#f7ce46'; ctx.fillRect(p.x - 4, p.y + 25, 36, 5); }
-function drawGoal() { ctx.fillStyle = '#f6f3ea'; ctx.fillRect(3130, 330, 5, 125); ctx.fillStyle = '#f7ce46'; ctx.beginPath(); ctx.moveTo(3135, 330); ctx.lineTo(3190, 350); ctx.lineTo(3135, 370); ctx.fill(); }
+function drawCoin(c) { const bob = Math.sin(game.time * .08 + c.pulse) * 4; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 16; ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.arc(c.x, c.y + bob, 9, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0; ctx.fillStyle = '#fff4bd'; ctx.fillRect(c.x - 2, c.y - 5 + bob, 3, 8); }
+function drawEnemy(e) { ctx.fillStyle = '#ff537d'; ctx.fillRect(e.x, e.y, 30, 32); ctx.fillStyle = '#661c55'; ctx.fillRect(e.x + 4, e.y + 4, 22, 4); ctx.fillStyle = '#171633'; ctx.fillRect(e.x + 5, e.y + 11, 6, 7); ctx.fillRect(e.x + 19, e.y + 11, 6, 7); ctx.fillStyle = '#ffb3d0'; ctx.fillRect(e.x + 7, e.y + 26, 16, 3); }
+function drawPlayer() { const p = game.player; ctx.fillStyle = '#34c9cf'; ctx.fillRect(p.x, p.y + 12, p.w, 30); ctx.fillStyle = '#8af4ff'; ctx.fillRect(p.x + 3, p.y, 22, 22); ctx.fillStyle = '#18224b'; ctx.fillRect(p.x + 6, p.y + 6, 16, 8); ctx.fillStyle = '#d8fbff'; ctx.fillRect(p.x + 8, p.y + 8, 4, 3); ctx.fillStyle = '#ffd166'; ctx.fillRect(p.x - 4, p.y + 25, 36, 5); ctx.fillStyle = '#1b3664'; ctx.fillRect(p.x + 4, p.y + 34, 7, 8); ctx.fillRect(p.x + 18, p.y + 34, 7, 8); }
+function drawGoal() { ctx.fillStyle = '#b9edff'; ctx.fillRect(3130, 330, 5, 125); ctx.fillStyle = '#ff4f87'; ctx.beginPath(); ctx.moveTo(3135, 330); ctx.lineTo(3190, 350); ctx.lineTo(3135, 370); ctx.fill(); ctx.fillStyle = 'rgba(255,79,135,.3)'; ctx.fillRect(3122, 330, 5, 125); }
 
 function loop() { update(); draw(); requestAnimationFrame(loop); }
 window.addEventListener('keydown', event => { keys[event.key] = true; if (event.code === 'Space') { event.preventDefault(); jump(); } });
